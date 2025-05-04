@@ -1,0 +1,341 @@
+-- Boombox GUI made by lurkinggs on discord
+local player = game:GetService("Players").LocalPlayer
+local RunService = game:GetService("RunService")
+
+repeat wait() until player:FindFirstChild("PlayerGui")
+
+local function findRemote()
+    local function searchBag()
+        for _, item in ipairs(player.Backpack:GetChildren()) do
+            if item:IsA("Tool") then
+                local remote = item:FindFirstChildWhichIsA("RemoteEvent")
+                if remote then return remote end
+            end
+        end
+        for _, item in ipairs(player.Character:GetChildren()) do
+            if item:IsA("Tool") then
+                local remote = item:FindFirstChildWhichIsA("RemoteEvent")
+                if remote then return remote end
+            end
+        end
+        return nil
+    end
+    return searchBag()
+end
+
+local songs = {
+    ["jugsta - motion"] = 14884816658,
+    ["jugsta - lose yourself"] = 14884817551,
+    ["jugsta - when im gone"] = 14884821038,
+    ["jugsta - spacin"] = 14884821394,
+    ["jugsta - japan"] = 14884822465,
+    ["jugsta - batman"] = 14884822914,
+    ["jugsta - lies"] = 14884824647,
+    ["jugsta - rampage"] = 15689441013,
+    ["jugsta - ball"] = 15689441541,
+    ["jugsta - dejavus"] = 15689442404,
+    ["jugsta - hatin"] = 15689442645,
+    ["jugsta - ouuu"] = 15689442874,
+    ["jugsta - rockstar"] = 15689449215,
+    ["jugsta - spooky scary skeletons"] = 15689450026,
+    ["jugsta - company"] = 15689450321,
+    ["jugsta - part of me"] = 15689451790,
+    ["jugsta - rampage (sped up)"] = 15689453751,
+    ["jugsta - rampage (other version)"] = 16662831606,
+    ["jugsta - manifest"] = 15689453973,
+    ["jugsta - deja vus 2"] = 15689455568,
+    ["jugsta - cash up"] = 16190758325,
+    ["jugsta - treasury"] = 16190761193,
+    ["jugsta - raining tacos (jugcore cover)"] = 16662830706,
+    ["jugsta - runaway"] = 16662827317,
+    ["jugsta - rampage (ai version)"] = 17422074348,
+}
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "BoomboxGUI"
+gui.ResetOnSpawn = false
+gui.Parent = player.PlayerGui
+
+-- Main frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 350, 0, 400)
+frame.Position = UDim2.new(0.5, -175, 0.5, -200)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+Instance.new("UICorner", frame)
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 32)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "Jugsta Boombox Player"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 22
+title.TextColor3 = Color3.new(1,1,1)
+title.Parent = frame
+
+-- Toggle Button (boombox icon)
+local toggleBtn = Instance.new("ImageButton")
+toggleBtn.Size = UDim2.new(0, 36, 0, 36)
+toggleBtn.Position = UDim2.new(1, -42, 0, 4)
+toggleBtn.BackgroundTransparency = 1
+toggleBtn.Image = "rbxassetid://6023426915" -- boombox icon
+toggleBtn.Parent = frame
+toggleBtn.ZIndex = 10
+
+-- Welcome Channel Frame
+local welcomeFrame = Instance.new("Frame")
+welcomeFrame.Size = UDim2.new(1, -20, 0, 180)
+welcomeFrame.Position = UDim2.new(0, 10, 0, 40)
+welcomeFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+welcomeFrame.BorderSizePixel = 0
+welcomeFrame.Parent = frame
+Instance.new("UICorner", welcomeFrame)
+
+local welcomeTitle = Instance.new("TextLabel")
+welcomeTitle.Size = UDim2.new(1, 0, 0, 30)
+welcomeTitle.Position = UDim2.new(0, 0, 0, 0)
+welcomeTitle.BackgroundTransparency = 1
+welcomeTitle.Text = "Welcome!"
+welcomeTitle.Font = Enum.Font.GothamBold
+welcomeTitle.TextSize = 20
+welcomeTitle.TextColor3 = Color3.new(1,1,1)
+welcomeTitle.Parent = welcomeFrame
+
+local welcomeText = Instance.new("TextLabel")
+welcomeText.Size = UDim2.new(1, -20, 1, -40)
+welcomeText.Position = UDim2.new(0, 10, 0, 30)
+welcomeText.BackgroundTransparency = 1
+welcomeText.TextColor3 = Color3.new(1, 1, 1)
+welcomeText.TextWrapped = true
+welcomeText.Font = Enum.Font.Gotham
+welcomeText.TextSize = 16
+welcomeText.Text = [[
+This script is open source coded — no RAT!
+
+Socials & Contact:
+• Discord: lurkinggs
+• Telegram: transactioner
+• Instagram: pickapillanypill
+• Email: lolvizual@gmail.com
+
+For questions or hiring, feel free to reach out!]]
+welcomeText.Parent = welcomeFrame
+
+-- Channel Tabs Frame
+local tabsFrame = Instance.new("Frame")
+tabsFrame.Size = UDim2.new(1, -20, 0, 30)
+tabsFrame.Position = UDim2.new(0, 10, 0, 225)
+tabsFrame.BackgroundTransparency = 1
+tabsFrame.Parent = frame
+
+-- Buttons for tabs
+local btnWelcome = Instance.new("TextButton")
+btnWelcome.Size = UDim2.new(0.48, 0, 1, 0)
+btnWelcome.Position = UDim2.new(0, 0, 0, 0)
+btnWelcome.BackgroundColor3 = Color3.fromRGB(65,65,65)
+btnWelcome.Text = "Welcome"
+btnWelcome.Font = Enum.Font.GothamBold
+btnWelcome.TextColor3 = Color3.new(1,1,1)
+btnWelcome.Parent = tabsFrame
+Instance.new("UICorner", btnWelcome)
+
+local btnPlayer = Instance.new("TextButton")
+btnPlayer.Size = UDim2.new(0.48, 0, 1, 0)
+btnPlayer.Position = UDim2.new(0.52, 0, 0, 0)
+btnPlayer.BackgroundColor3 = Color3.fromRGB(45,45,45)
+btnPlayer.Text = "Player"
+btnPlayer.Font = Enum.Font.GothamBold
+btnPlayer.TextColor3 = Color3.new(1,1,1)
+btnPlayer.Parent = tabsFrame
+Instance.new("UICorner", btnPlayer)
+
+-- Player Channel Frame
+local playerFrame = Instance.new("Frame")
+playerFrame.Size = UDim2.new(1, -20, 1, -270)
+playerFrame.Position = UDim2.new(0, 10, 0, 260)
+playerFrame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+playerFrame.BorderSizePixel = 0
+playerFrame.Visible = false
+playerFrame.Parent = frame
+Instance.new("UICorner", playerFrame)
+
+-- TextBox for audio input
+local input = Instance.new("TextBox")
+input.PlaceholderText = "Paste Audio ID or Select from List"
+input.Size = UDim2.new(1, -20, 0, 30)
+input.Position = UDim2.new(0, 10, 0, 0)
+input.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+input.TextColor3 = Color3.new(1, 1, 1)
+input.ClearTextOnFocus = false
+input.Parent = playerFrame
+Instance.new("UICorner", input)
+
+-- Status Label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, -20, 0, 24)
+statusLabel.Position = UDim2.new(0, 10, 0, 35)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = ""
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextSize = 16
+statusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+statusLabel.TextWrapped = true
+statusLabel.Parent = playerFrame
+
+-- Buttons Play & Stop Frame
+local buttonsFrame = Instance.new("Frame")
+buttonsFrame.Size = UDim2.new(1, -20, 0, 36)
+buttonsFrame.Position = UDim2.new(0, 10, 0, 60)
+buttonsFrame.BackgroundTransparency = 1
+buttonsFrame.Parent = playerFrame
+
+local playBtn = Instance.new("TextButton")
+playBtn.Text = "Play"
+playBtn.Size = UDim2.new(0.48, -5, 1, 0)
+playBtn.Position = UDim2.new(0, 0, 0, 0)
+playBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 127)
+playBtn.TextColor3 = Color3.new(1, 1, 1)
+playBtn.Parent = buttonsFrame
+Instance.new("UICorner", playBtn)
+
+local stopBtn = Instance.new("TextButton")
+stopBtn.Text = "Stop"
+stopBtn.Size = UDim2.new(0.48, -5, 1, 0)
+stopBtn.Position = UDim2.new(0.52, 0, 0, 0)
+stopBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+stopBtn.TextColor3 = Color3.new(1, 1, 1)
+stopBtn.Parent = buttonsFrame
+Instance.new("UICorner", stopBtn)
+
+-- Scrolling frame for song list
+local scroll = Instance.new("ScrollingFrame")
+scroll.Position = UDim2.new(0, 10, 0, 100)
+scroll.Size = UDim2.new(1, -20, 1, -110)
+scroll.CanvasSize = UDim2.new(0, 0, 0, #songs * 34)
+scroll.ScrollBarThickness = 8
+scroll.BorderSizePixel = 0
+scroll.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+scroll.Parent = playerFrame
+Instance.new("UICorner", scroll)
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0,4)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Parent = scroll
+
+for name, id in pairs(songs) do
+    local button = Instance.new("TextButton")
+    button.Text = name
+    button.Size = UDim2.new(1, -10, 0, 30)
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.Parent = scroll
+    Instance.new("UICorner", button)
+    button.MouseButton1Click:Connect(function()
+        input.Text = tostring(id)
+        statusLabel.Text = "Selected: "..name
+        statusLabel.TextColor3 = Color3.fromRGB(180, 255, 180)
+    end)
+end
+
+local boomboxRemote = findRemote()
+
+spawn(function()
+    while gui and gui.Parent do
+        wait(2)
+        local remote = findRemote()
+        if remote ~= boomboxRemote then
+            boomboxRemote = remote
+            if boomboxRemote then
+                statusLabel.Text = "Boombox equipped."
+                statusLabel.TextColor3 = Color3.fromRGB(180, 255, 180)
+            else
+                statusLabel.Text = "Boombox not equipped."
+                statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+            end
+        end
+    end
+end)
+
+local function playSong(id)
+    if not boomboxRemote then
+        statusLabel.Text = "No boombox equipped!"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        return
+    end
+    if typeof(id) ~= "number" then
+        statusLabel.Text = "Invalid Audio ID!"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        return
+    end
+    local success, err = pcall(function()
+        boomboxRemote:FireServer("PlaySong", id)
+    end)
+    if success then
+        statusLabel.Text = "Playing audio ID: "..id
+        statusLabel.TextColor3 = Color3.fromRGB(180, 255, 180)
+    else
+        statusLabel.Text = "Failed to play sound: "..tostring(err)
+        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+    end
+end
+
+local function stopSong()
+    if not boomboxRemote then
+        statusLabel.Text = "No boombox equipped!"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        return
+    end
+    local success, err = pcall(function()
+        boomboxRemote:FireServer("StopSong")
+    end)
+    if success then
+        statusLabel.Text = "Playback stopped."
+        statusLabel.TextColor3 = Color3.fromRGB(180, 255, 180)
+    else
+        statusLabel.Text = "Failed to stop sound: "..tostring(err)
+        statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+    end
+end
+
+playBtn.MouseButton1Click:Connect(function()
+    local id = tonumber(input.Text)
+    playSong(id)
+end)
+
+stopBtn.MouseButton1Click:Connect(function()
+    stopSong()
+end)
+
+btnWelcome.MouseButton1Click:Connect(function()
+    welcomeFrame.Visible = true
+    playerFrame.Visible = false
+    btnWelcome.BackgroundColor3 = Color3.fromRGB(65,65,65)
+    btnPlayer.BackgroundColor3 = Color3.fromRGB(45,45,45)
+end)
+
+btnPlayer.MouseButton1Click:Connect(function()
+    welcomeFrame.Visible = false
+    playerFrame.Visible = true
+    btnPlayer.BackgroundColor3 = Color3.fromRGB(65,65,65)
+    btnWelcome.BackgroundColor3 = Color3.fromRGB(45,45,45)
+end)
+
+-- Initial tab
+btnWelcome.BackgroundColor3 = Color3.fromRGB(65,65,65)
+btnPlayer.BackgroundColor3 = Color3.fromRGB(45,45,45)
+welcomeFrame.Visible = true
+playerFrame.Visible = false
+
+-- Toggle GUI visibility
+toggleBtn.MouseButton1Click:Connect(function()
+    gui.Enabled = not gui.Enabled
+end)
+
+-- MOBILE SUPPORT: GUI scales to screen
+gui.ResetOnSpawn = false
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
