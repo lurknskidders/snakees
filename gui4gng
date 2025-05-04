@@ -1,4 +1,4 @@
--- Boombox GUI made by lurkinggs on discord
+-- GalaxyBox Hub V1 - Enhanced stylish Boombox GUI for Roblox
 local player = game:GetService("Players").LocalPlayer
 local RunService = game:GetService("RunService")
 
@@ -51,69 +51,119 @@ local songs = {
     ["jugsta - rampage (ai version)"] = 17422074348,
 }
 
+local TweenService = game:GetService("TweenService")
+
 local gui = Instance.new("ScreenGui")
-gui.Name = "BoomboxGUI"
+gui.Name = "GalaxyBoxHubV1"
 gui.ResetOnSpawn = false
 gui.Parent = player.PlayerGui
 
--- Main frame
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 350, 0, 400)
-frame.Position = UDim2.new(0.5, -175, 0.5, -200)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-frame.BorderSizePixel = 0
-frame.Parent = gui
-Instance.new("UICorner", frame)
+-- Colors
+local baseColor = Color3.fromRGB(18, 18, 25)
+local accentColor = Color3.fromRGB(85, 170, 255)
+local accentColor2 = Color3.fromRGB(170, 0, 255)
+local textColor = Color3.fromRGB(235, 235, 245)
+local darkAccent = Color3.fromRGB(30, 30, 42)
 
--- Title
+-- Create main frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 340, 0, 480)
+frame.Position = UDim2.new(0, 10, 1, -548)
+frame.BackgroundColor3 = baseColor
+frame.BorderSizePixel = 0
+frame.Visible = false
+frame.Parent = gui
+local frameCorner = Instance.new("UICorner", frame)
+frameCorner.CornerRadius = UDim.new(0,12)
+
+-- Drop Shadow
+local shadow = Instance.new("ImageLabel")
+shadow.Name = "Shadow"
+shadow.BackgroundTransparency = 1
+shadow.Size = UDim2.new(1, 16, 1, 16)
+shadow.Position = UDim2.new(0, -8, 0, -8)
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageColor3 = Color3.new(0, 0, 0)
+shadow.ImageTransparency = 0.6
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10,10,118,118)
+shadow.Parent = frame
+shadow.ZIndex = 0
+
+-- Gradient for frame
+local bgGradient = Instance.new("UIGradient", frame)
+bgGradient.Rotation = 45
+bgGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, darkAccent),
+    ColorSequenceKeypoint.new(0.5, baseColor),
+    ColorSequenceKeypoint.new(1, darkAccent)
+})
+
+-- Title Label
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 32)
+title.Size = UDim2.new(1, 0, 0, 36)
 title.Position = UDim2.new(0, 0, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "Jugsta Boombox Player"
+title.Text = "GalaxyBox Hub V1"
 title.Font = Enum.Font.GothamBold
-title.TextSize = 22
-title.TextColor3 = Color3.new(1,1,1)
+title.TextSize = 24
+title.TextColor3 = accentColor
 title.Parent = frame
+title.ZIndex = 3
+title.TextStrokeTransparency = 0.75
 
--- Toggle Button (boombox icon)
-local toggleBtn = Instance.new("ImageButton")
-toggleBtn.Size = UDim2.new(0, 36, 0, 36)
-toggleBtn.Position = UDim2.new(1, -42, 0, 4)
-toggleBtn.BackgroundTransparency = 1
-toggleBtn.Image = "rbxassetid://6023426915" -- boombox icon
-toggleBtn.Parent = frame
-toggleBtn.ZIndex = 10
+-- Persistent toggle icon button
+local toggleIcon = Instance.new("ImageButton")
+toggleIcon.Name = "ToggleBoomboxIcon"
+toggleIcon.Size = UDim2.new(0, 44, 0, 44)
+toggleIcon.Position = UDim2.new(0, 8, 1, -52)
+toggleIcon.BackgroundColor3 = darkAccent
+toggleIcon.BorderSizePixel = 0
+toggleIcon.Image = "rbxassetid://6023426915" -- boombox icon
+toggleIcon.Parent = player.PlayerGui
+toggleIcon.ZIndex = 1000
+local toggleCorner = Instance.new("UICorner", toggleIcon)
+toggleCorner.CornerRadius = UDim.new(0,10)
+
+local function buttonHover(btn)
+    local hoverTween = TweenService:Create(btn, TweenInfo.new(0.25), {BackgroundColor3 = accentColor2})
+    local unhoverTween = TweenService:Create(btn, TweenInfo.new(0.25), {BackgroundColor3 = darkAccent})
+    btn.MouseEnter:Connect(function() hoverTween:Play() end)
+    btn.MouseLeave:Connect(function() unhoverTween:Play() end)
+end
+
+buttonHover(toggleIcon)
 
 -- Welcome Channel Frame
 local welcomeFrame = Instance.new("Frame")
-welcomeFrame.Size = UDim2.new(1, -20, 0, 180)
-welcomeFrame.Position = UDim2.new(0, 10, 0, 40)
-welcomeFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+welcomeFrame.Size = UDim2.new(1, -20, 0, 160)
+welcomeFrame.Position = UDim2.new(0, 10, 0, 45)
+welcomeFrame.BackgroundColor3 = darkAccent
 welcomeFrame.BorderSizePixel = 0
 welcomeFrame.Parent = frame
-Instance.new("UICorner", welcomeFrame)
+local welcomeCorner = Instance.new("UICorner", welcomeFrame)
+welcomeCorner.CornerRadius = UDim.new(0,10)
 
 local welcomeTitle = Instance.new("TextLabel")
-welcomeTitle.Size = UDim2.new(1, 0, 0, 30)
+welcomeTitle.Size = UDim2.new(1, 0, 0, 28)
 welcomeTitle.Position = UDim2.new(0, 0, 0, 0)
 welcomeTitle.BackgroundTransparency = 1
 welcomeTitle.Text = "Welcome!"
 welcomeTitle.Font = Enum.Font.GothamBold
 welcomeTitle.TextSize = 20
-welcomeTitle.TextColor3 = Color3.new(1,1,1)
+welcomeTitle.TextColor3 = accentColor
 welcomeTitle.Parent = welcomeFrame
 
 local welcomeText = Instance.new("TextLabel")
-welcomeText.Size = UDim2.new(1, -20, 1, -40)
+welcomeText.Size = UDim2.new(1, -20, 1, -35)
 welcomeText.Position = UDim2.new(0, 10, 0, 30)
 welcomeText.BackgroundTransparency = 1
-welcomeText.TextColor3 = Color3.new(1, 1, 1)
+welcomeText.TextColor3 = textColor
 welcomeText.TextWrapped = true
 welcomeText.Font = Enum.Font.Gotham
-welcomeText.TextSize = 16
+welcomeText.TextSize = 15
 welcomeText.Text = [[
-This script is open source coded — no RAT!
+This script is OPEN SOURCE and free of RATs.
 
 Socials & Contact:
 • Discord: lurkinggs
@@ -121,123 +171,152 @@ Socials & Contact:
 • Instagram: pickapillanypill
 • Email: lolvizual@gmail.com
 
-For questions or hiring, feel free to reach out!]]
+Audio credits to jugsta.
+]]
 welcomeText.Parent = welcomeFrame
 
 -- Channel Tabs Frame
 local tabsFrame = Instance.new("Frame")
-tabsFrame.Size = UDim2.new(1, -20, 0, 30)
-tabsFrame.Position = UDim2.new(0, 10, 0, 225)
+tabsFrame.Size = UDim2.new(1, -20, 0, 32)
+tabsFrame.Position = UDim2.new(0, 10, 0, 210)
 tabsFrame.BackgroundTransparency = 1
 tabsFrame.Parent = frame
 
--- Buttons for tabs
 local btnWelcome = Instance.new("TextButton")
 btnWelcome.Size = UDim2.new(0.48, 0, 1, 0)
 btnWelcome.Position = UDim2.new(0, 0, 0, 0)
-btnWelcome.BackgroundColor3 = Color3.fromRGB(65,65,65)
+btnWelcome.BackgroundColor3 = accentColor
 btnWelcome.Text = "Welcome"
+btnWelcome.AutoButtonColor = false
 btnWelcome.Font = Enum.Font.GothamBold
+btnWelcome.TextSize = 17
 btnWelcome.TextColor3 = Color3.new(1,1,1)
 btnWelcome.Parent = tabsFrame
-Instance.new("UICorner", btnWelcome)
+local btnWelcomeCorner = Instance.new("UICorner", btnWelcome)
+btnWelcomeCorner.CornerRadius = UDim.new(0,10)
 
 local btnPlayer = Instance.new("TextButton")
 btnPlayer.Size = UDim2.new(0.48, 0, 1, 0)
 btnPlayer.Position = UDim2.new(0.52, 0, 0, 0)
-btnPlayer.BackgroundColor3 = Color3.fromRGB(45,45,45)
+btnPlayer.BackgroundColor3 = darkAccent
 btnPlayer.Text = "Player"
+btnPlayer.AutoButtonColor = false
 btnPlayer.Font = Enum.Font.GothamBold
+btnPlayer.TextSize = 17
 btnPlayer.TextColor3 = Color3.new(1,1,1)
 btnPlayer.Parent = tabsFrame
-Instance.new("UICorner", btnPlayer)
+local btnPlayerCorner = Instance.new("UICorner", btnPlayer)
+btnPlayerCorner.CornerRadius = UDim.new(0,10)
+
+buttonHover(btnWelcome)
+buttonHover(btnPlayer)
 
 -- Player Channel Frame
 local playerFrame = Instance.new("Frame")
-playerFrame.Size = UDim2.new(1, -20, 1, -270)
-playerFrame.Position = UDim2.new(0, 10, 0, 260)
-playerFrame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+playerFrame.Size = UDim2.new(1, -20, 1, -260)
+playerFrame.Position = UDim2.new(0, 10, 0, 250)
+playerFrame.BackgroundColor3 = darkAccent
 playerFrame.BorderSizePixel = 0
 playerFrame.Visible = false
 playerFrame.Parent = frame
-Instance.new("UICorner", playerFrame)
+local playerCorner = Instance.new("UICorner", playerFrame)
+playerCorner.CornerRadius = UDim.new(0,10)
 
--- TextBox for audio input
+-- Input Box
 local input = Instance.new("TextBox")
 input.PlaceholderText = "Paste Audio ID or Select from List"
-input.Size = UDim2.new(1, -20, 0, 30)
-input.Position = UDim2.new(0, 10, 0, 0)
-input.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
-input.TextColor3 = Color3.new(1, 1, 1)
+input.Size = UDim2.new(1, -30, 0, 32)
+input.Position = UDim2.new(0, 15, 0, 10)
+input.BackgroundColor3 = baseColor
+input.TextColor3 = textColor
 input.ClearTextOnFocus = false
 input.Parent = playerFrame
-Instance.new("UICorner", input)
+local inputCorner = Instance.new("UICorner", input)
+inputCorner.CornerRadius = UDim.new(0,8)
 
 -- Status Label
 local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(1, -20, 0, 24)
-statusLabel.Position = UDim2.new(0, 10, 0, 35)
+statusLabel.Size = UDim2.new(1, -30, 0, 20)
+statusLabel.Position = UDim2.new(0, 15, 0, 50)
 statusLabel.BackgroundTransparency = 1
 statusLabel.Text = ""
 statusLabel.Font = Enum.Font.Gotham
-statusLabel.TextSize = 16
-statusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+statusLabel.TextSize = 14
+statusLabel.TextColor3 = textColor
 statusLabel.TextWrapped = true
 statusLabel.Parent = playerFrame
 
--- Buttons Play & Stop Frame
+-- Buttons Frame (Play & Stop)
 local buttonsFrame = Instance.new("Frame")
-buttonsFrame.Size = UDim2.new(1, -20, 0, 36)
-buttonsFrame.Position = UDim2.new(0, 10, 0, 60)
+buttonsFrame.Size = UDim2.new(1, -30, 0, 34)
+buttonsFrame.Position = UDim2.new(0, 15, 0, 78)
 buttonsFrame.BackgroundTransparency = 1
 buttonsFrame.Parent = playerFrame
 
 local playBtn = Instance.new("TextButton")
 playBtn.Text = "Play"
-playBtn.Size = UDim2.new(0.48, -5, 1, 0)
+playBtn.Size = UDim2.new(0.48, -8, 1, 0)
 playBtn.Position = UDim2.new(0, 0, 0, 0)
-playBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 127)
+playBtn.BackgroundColor3 = accentColor2
 playBtn.TextColor3 = Color3.new(1, 1, 1)
+playBtn.Font = Enum.Font.GothamBold
+playBtn.TextSize = 18
 playBtn.Parent = buttonsFrame
-Instance.new("UICorner", playBtn)
+local playBtnCorner = Instance.new("UICorner", playBtn)
+playBtnCorner.CornerRadius = UDim.new(0,10)
+buttonHover(playBtn)
 
 local stopBtn = Instance.new("TextButton")
 stopBtn.Text = "Stop"
-stopBtn.Size = UDim2.new(0.48, -5, 1, 0)
+stopBtn.Size = UDim2.new(0.48, -8, 1, 0)
 stopBtn.Position = UDim2.new(0.52, 0, 0, 0)
-stopBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+stopBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 90)
 stopBtn.TextColor3 = Color3.new(1, 1, 1)
+stopBtn.Font = Enum.Font.GothamBold
+stopBtn.TextSize = 18
 stopBtn.Parent = buttonsFrame
-Instance.new("UICorner", stopBtn)
+local stopBtnCorner = Instance.new("UICorner", stopBtn)
+stopBtnCorner.CornerRadius = UDim.new(0,10)
+buttonHover(stopBtn)
 
--- Scrolling frame for song list
+-- Scroll Frame for songs
 local scroll = Instance.new("ScrollingFrame")
-scroll.Position = UDim2.new(0, 10, 0, 100)
-scroll.Size = UDim2.new(1, -20, 1, -110)
-scroll.CanvasSize = UDim2.new(0, 0, 0, #songs * 34)
-scroll.ScrollBarThickness = 8
+scroll.Position = UDim2.new(0, 15, 0, 120)
+scroll.Size = UDim2.new(1, -30, 1, -130)
+scroll.CanvasSize = UDim2.new(0, 0, 0, #songs * 30)
+scroll.ScrollBarThickness = 6
+scroll.BackgroundColor3 = baseColor
 scroll.BorderSizePixel = 0
-scroll.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 scroll.Parent = playerFrame
-Instance.new("UICorner", scroll)
+local scrollCorner = Instance.new("UICorner", scroll)
+scrollCorner.CornerRadius = UDim.new(0,10)
 
 local layout = Instance.new("UIListLayout")
-layout.Padding = UDim.new(0,4)
+layout.Padding = UDim.new(0,5)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.Parent = scroll
 
 for name, id in pairs(songs) do
     local button = Instance.new("TextButton")
     button.Text = name
-    button.Size = UDim2.new(1, -10, 0, 30)
-    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    button.TextColor3 = Color3.new(1, 1, 1)
+    button.Size = UDim2.new(1, -10, 0, 28)
+    button.BackgroundColor3 = darkAccent
+    button.TextColor3 = textColor
+    button.Font = Enum.Font.Gotham
+    button.TextSize = 16
     button.Parent = scroll
-    Instance.new("UICorner", button)
+    local btnCorner = Instance.new("UICorner", button)
+    btnCorner.CornerRadius = UDim.new(0,8)
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.15), {BackgroundColor3 = accentColor}):Play()
+    end)
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.15), {BackgroundColor3 = darkAccent}):Play()
+    end)
     button.MouseButton1Click:Connect(function()
         input.Text = tostring(id)
         statusLabel.Text = "Selected: "..name
-        statusLabel.TextColor3 = Color3.fromRGB(180, 255, 180)
+        statusLabel.TextColor3 = accentColor
     end)
 end
 
@@ -251,7 +330,7 @@ spawn(function()
             boomboxRemote = remote
             if boomboxRemote then
                 statusLabel.Text = "Boombox equipped."
-                statusLabel.TextColor3 = Color3.fromRGB(180, 255, 180)
+                statusLabel.TextColor3 = accentColor
             else
                 statusLabel.Text = "Boombox not equipped."
                 statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
@@ -276,7 +355,7 @@ local function playSong(id)
     end)
     if success then
         statusLabel.Text = "Playing audio ID: "..id
-        statusLabel.TextColor3 = Color3.fromRGB(180, 255, 180)
+        statusLabel.TextColor3 = accentColor
     else
         statusLabel.Text = "Failed to play sound: "..tostring(err)
         statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
@@ -294,7 +373,7 @@ local function stopSong()
     end)
     if success then
         statusLabel.Text = "Playback stopped."
-        statusLabel.TextColor3 = Color3.fromRGB(180, 255, 180)
+        statusLabel.TextColor3 = accentColor
     else
         statusLabel.Text = "Failed to stop sound: "..tostring(err)
         statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
@@ -313,29 +392,29 @@ end)
 btnWelcome.MouseButton1Click:Connect(function()
     welcomeFrame.Visible = true
     playerFrame.Visible = false
-    btnWelcome.BackgroundColor3 = Color3.fromRGB(65,65,65)
-    btnPlayer.BackgroundColor3 = Color3.fromRGB(45,45,45)
+    btnWelcome.BackgroundColor3 = accentColor
+    btnPlayer.BackgroundColor3 = darkAccent
 end)
 
 btnPlayer.MouseButton1Click:Connect(function()
     welcomeFrame.Visible = false
     playerFrame.Visible = true
-    btnPlayer.BackgroundColor3 = Color3.fromRGB(65,65,65)
-    btnWelcome.BackgroundColor3 = Color3.fromRGB(45,45,45)
+    btnPlayer.BackgroundColor3 = accentColor
+    btnWelcome.BackgroundColor3 = darkAccent
 end)
 
--- Initial tab
-btnWelcome.BackgroundColor3 = Color3.fromRGB(65,65,65)
-btnPlayer.BackgroundColor3 = Color3.fromRGB(45,45,45)
+-- Initial tabs
+btnWelcome.BackgroundColor3 = accentColor
+btnPlayer.BackgroundColor3 = darkAccent
 welcomeFrame.Visible = true
 playerFrame.Visible = false
 
--- Toggle GUI visibility
-toggleBtn.MouseButton1Click:Connect(function()
-    gui.Enabled = not gui.Enabled
+-- Toggle button behavior
+toggleIcon.MouseButton1Click:Connect(function()
+    frame.Visible = not frame.Visible
 end)
 
--- MOBILE SUPPORT: GUI scales to screen
+-- Anchor & position for mobile
 gui.ResetOnSpawn = false
-frame.AnchorPoint = Vector2.new(0.5, 0.5)
-frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.AnchorPoint = Vector2.new(0, 1)
+frame.Position = UDim2.new(0, 10, 1, -58 - 480)
