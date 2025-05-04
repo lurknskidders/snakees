@@ -1,6 +1,7 @@
 -- GalaxyBox Hub V1 - Enhanced stylish Boombox GUI for Roblox
 local player = game:GetService("Players").LocalPlayer
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 
 repeat wait() until player:FindFirstChild("PlayerGui")
 
@@ -12,10 +13,12 @@ local function findRemote()
                 if remote then return remote end
             end
         end
-        for _, item in ipairs(player.Character:GetChildren()) do
-            if item:IsA("Tool") then
-                local remote = item:FindFirstChildWhichIsA("RemoteEvent")
-                if remote then return remote end
+        if player.Character then
+            for _, item in ipairs(player.Character:GetChildren()) do
+                if item:IsA("Tool") then
+                    local remote = item:FindFirstChildWhichIsA("RemoteEvent")
+                    if remote then return remote end
+                end
             end
         end
         return nil
@@ -51,12 +54,11 @@ local songs = {
     ["jugsta - rampage (ai version)"] = 17422074348,
 }
 
-local TweenService = game:GetService("TweenService")
-
+-- Create ScreenGui
 local gui = Instance.new("ScreenGui")
 gui.Name = "GalaxyBoxHubV1"
 gui.ResetOnSpawn = false
-gui.Parent = player.PlayerGui
+gui.Parent = player:WaitForChild("PlayerGui")
 
 -- Colors
 local baseColor = Color3.fromRGB(18, 18, 25)
@@ -65,16 +67,16 @@ local accentColor2 = Color3.fromRGB(170, 0, 255)
 local textColor = Color3.fromRGB(235, 235, 245)
 local darkAccent = Color3.fromRGB(30, 30, 42)
 
--- Create main frame
+-- Main Frame
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 340, 0, 480)
-frame.Position = UDim2.new(0, 10, 1, -548)
+frame.Position = UDim2.new(0, 10, 1, -548) -- bottom-left corner style position
+frame.AnchorPoint = Vector2.new(0, 1) -- anchor bottom left for easier positioning
 frame.BackgroundColor3 = baseColor
 frame.BorderSizePixel = 0
-frame.Visible = false
 frame.Parent = gui
-local frameCorner = Instance.new("UICorner", frame)
-frameCorner.CornerRadius = UDim.new(0,12)
+frame.Visible = false -- start hidden, toggle with icon
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
 -- Drop Shadow
 local shadow = Instance.new("ImageLabel")
@@ -90,7 +92,7 @@ shadow.SliceCenter = Rect.new(10,10,118,118)
 shadow.Parent = frame
 shadow.ZIndex = 0
 
--- Gradient for frame
+-- Gradient Background
 local bgGradient = Instance.new("UIGradient", frame)
 bgGradient.Rotation = 45
 bgGradient.Color = ColorSequence.new({
@@ -112,41 +114,41 @@ title.Parent = frame
 title.ZIndex = 3
 title.TextStrokeTransparency = 0.75
 
--- Persistent toggle icon button
+-- Persistent Toggle Icon
 local toggleIcon = Instance.new("ImageButton")
 toggleIcon.Name = "ToggleBoomboxIcon"
 toggleIcon.Size = UDim2.new(0, 44, 0, 44)
-toggleIcon.Position = UDim2.new(0, 8, 1, -52)
+toggleIcon.Position = UDim2.new(0, 10, 1, -58)
+toggleIcon.AnchorPoint = Vector2.new(0,1)
 toggleIcon.BackgroundColor3 = darkAccent
 toggleIcon.BorderSizePixel = 0
 toggleIcon.Image = "rbxassetid://6023426915" -- boombox icon
-toggleIcon.Parent = player.PlayerGui
+toggleIcon.Parent = player:WaitForChild("PlayerGui")
 toggleIcon.ZIndex = 1000
-local toggleCorner = Instance.new("UICorner", toggleIcon)
-toggleCorner.CornerRadius = UDim.new(0,10)
+Instance.new("UICorner", toggleIcon).CornerRadius = UDim.new(0,10)
 
-local function buttonHover(btn)
-    local hoverTween = TweenService:Create(btn, TweenInfo.new(0.25), {BackgroundColor3 = accentColor2})
-    local unhoverTween = TweenService:Create(btn, TweenInfo.new(0.25), {BackgroundColor3 = darkAccent})
+-- Utility function for button hover tweens
+local function buttonHover(btn, hoverColor, baseColor)
+    local hoverTween = TweenService:Create(btn, TweenInfo.new(0.25), {BackgroundColor3 = hoverColor})
+    local unhoverTween = TweenService:Create(btn, TweenInfo.new(0.25), {BackgroundColor3 = baseColor})
     btn.MouseEnter:Connect(function() hoverTween:Play() end)
     btn.MouseLeave:Connect(function() unhoverTween:Play() end)
 end
 
-buttonHover(toggleIcon)
+buttonHover(toggleIcon, accentColor2, darkAccent)
 
--- Welcome Channel Frame
+-- Welcome Frame
 local welcomeFrame = Instance.new("Frame")
 welcomeFrame.Size = UDim2.new(1, -20, 0, 160)
 welcomeFrame.Position = UDim2.new(0, 10, 0, 45)
 welcomeFrame.BackgroundColor3 = darkAccent
 welcomeFrame.BorderSizePixel = 0
 welcomeFrame.Parent = frame
-local welcomeCorner = Instance.new("UICorner", welcomeFrame)
-welcomeCorner.CornerRadius = UDim.new(0,10)
+Instance.new("UICorner", welcomeFrame).CornerRadius = UDim.new(0, 10)
 
 local welcomeTitle = Instance.new("TextLabel")
 welcomeTitle.Size = UDim2.new(1, 0, 0, 28)
-welcomeTitle.Position = UDim2.new(0, 0, 0, 0)
+welcomeTitle.Position = UDim2.new(0,0,0,0)
 welcomeTitle.BackgroundTransparency = 1
 welcomeTitle.Text = "Welcome!"
 welcomeTitle.Font = Enum.Font.GothamBold
@@ -175,7 +177,7 @@ Audio credits to jugsta.
 ]]
 welcomeText.Parent = welcomeFrame
 
--- Channel Tabs Frame
+-- Tabs Frame
 local tabsFrame = Instance.new("Frame")
 tabsFrame.Size = UDim2.new(1, -20, 0, 32)
 tabsFrame.Position = UDim2.new(0, 10, 0, 210)
@@ -190,10 +192,9 @@ btnWelcome.Text = "Welcome"
 btnWelcome.AutoButtonColor = false
 btnWelcome.Font = Enum.Font.GothamBold
 btnWelcome.TextSize = 17
-btnWelcome.TextColor3 = Color3.new(1,1,1)
+btnWelcome.TextColor3 = textColor
 btnWelcome.Parent = tabsFrame
-local btnWelcomeCorner = Instance.new("UICorner", btnWelcome)
-btnWelcomeCorner.CornerRadius = UDim.new(0,10)
+Instance.new("UICorner", btnWelcome).CornerRadius = UDim.new(0, 10)
 
 local btnPlayer = Instance.new("TextButton")
 btnPlayer.Size = UDim2.new(0.48, 0, 1, 0)
@@ -203,15 +204,14 @@ btnPlayer.Text = "Player"
 btnPlayer.AutoButtonColor = false
 btnPlayer.Font = Enum.Font.GothamBold
 btnPlayer.TextSize = 17
-btnPlayer.TextColor3 = Color3.new(1,1,1)
+btnPlayer.TextColor3 = textColor
 btnPlayer.Parent = tabsFrame
-local btnPlayerCorner = Instance.new("UICorner", btnPlayer)
-btnPlayerCorner.CornerRadius = UDim.new(0,10)
+Instance.new("UICorner", btnPlayer).CornerRadius = UDim.new(0, 10)
 
-buttonHover(btnWelcome)
-buttonHover(btnPlayer)
+buttonHover(btnWelcome, accentColor2, accentColor)
+buttonHover(btnPlayer, accentColor2, darkAccent)
 
--- Player Channel Frame
+-- Player Frame
 local playerFrame = Instance.new("Frame")
 playerFrame.Size = UDim2.new(1, -20, 1, -260)
 playerFrame.Position = UDim2.new(0, 10, 0, 250)
@@ -219,10 +219,9 @@ playerFrame.BackgroundColor3 = darkAccent
 playerFrame.BorderSizePixel = 0
 playerFrame.Visible = false
 playerFrame.Parent = frame
-local playerCorner = Instance.new("UICorner", playerFrame)
-playerCorner.CornerRadius = UDim.new(0,10)
+Instance.new("UICorner", playerFrame).CornerRadius = UDim.new(0, 10)
 
--- Input Box
+-- Input box
 local input = Instance.new("TextBox")
 input.PlaceholderText = "Paste Audio ID or Select from List"
 input.Size = UDim2.new(1, -30, 0, 32)
@@ -231,10 +230,9 @@ input.BackgroundColor3 = baseColor
 input.TextColor3 = textColor
 input.ClearTextOnFocus = false
 input.Parent = playerFrame
-local inputCorner = Instance.new("UICorner", input)
-inputCorner.CornerRadius = UDim.new(0,8)
+Instance.new("UICorner", input).CornerRadius = UDim.new(0, 8)
 
--- Status Label
+-- Status label
 local statusLabel = Instance.new("TextLabel")
 statusLabel.Size = UDim2.new(1, -30, 0, 20)
 statusLabel.Position = UDim2.new(0, 15, 0, 50)
@@ -246,7 +244,7 @@ statusLabel.TextColor3 = textColor
 statusLabel.TextWrapped = true
 statusLabel.Parent = playerFrame
 
--- Buttons Frame (Play & Stop)
+-- Buttons frame
 local buttonsFrame = Instance.new("Frame")
 buttonsFrame.Size = UDim2.new(1, -30, 0, 34)
 buttonsFrame.Position = UDim2.new(0, 15, 0, 78)
@@ -258,28 +256,26 @@ playBtn.Text = "Play"
 playBtn.Size = UDim2.new(0.48, -8, 1, 0)
 playBtn.Position = UDim2.new(0, 0, 0, 0)
 playBtn.BackgroundColor3 = accentColor2
-playBtn.TextColor3 = Color3.new(1, 1, 1)
+playBtn.TextColor3 = textColor
 playBtn.Font = Enum.Font.GothamBold
 playBtn.TextSize = 18
 playBtn.Parent = buttonsFrame
-local playBtnCorner = Instance.new("UICorner", playBtn)
-playBtnCorner.CornerRadius = UDim.new(0,10)
-buttonHover(playBtn)
+Instance.new("UICorner", playBtn).CornerRadius = UDim.new(0, 10)
+buttonHover(playBtn, accentColor, accentColor2)
 
 local stopBtn = Instance.new("TextButton")
 stopBtn.Text = "Stop"
 stopBtn.Size = UDim2.new(0.48, -8, 1, 0)
 stopBtn.Position = UDim2.new(0.52, 0, 0, 0)
 stopBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 90)
-stopBtn.TextColor3 = Color3.new(1, 1, 1)
+stopBtn.TextColor3 = textColor
 stopBtn.Font = Enum.Font.GothamBold
 stopBtn.TextSize = 18
 stopBtn.Parent = buttonsFrame
-local stopBtnCorner = Instance.new("UICorner", stopBtn)
-stopBtnCorner.CornerRadius = UDim.new(0,10)
-buttonHover(stopBtn)
+Instance.new("UICorner", stopBtn).CornerRadius = UDim.new(0, 10)
+buttonHover(stopBtn, Color3.fromRGB(255, 100, 120), Color3.fromRGB(255, 60, 90))
 
--- Scroll Frame for songs
+-- Scroll frame for songs
 local scroll = Instance.new("ScrollingFrame")
 scroll.Position = UDim2.new(0, 15, 0, 120)
 scroll.Size = UDim2.new(1, -30, 1, -130)
@@ -288,8 +284,7 @@ scroll.ScrollBarThickness = 6
 scroll.BackgroundColor3 = baseColor
 scroll.BorderSizePixel = 0
 scroll.Parent = playerFrame
-local scrollCorner = Instance.new("UICorner", scroll)
-scrollCorner.CornerRadius = UDim.new(0,10)
+Instance.new("UICorner", scroll).CornerRadius = UDim.new(0, 10)
 
 local layout = Instance.new("UIListLayout")
 layout.Padding = UDim.new(0,5)
@@ -306,7 +301,8 @@ for name, id in pairs(songs) do
     button.TextSize = 16
     button.Parent = scroll
     local btnCorner = Instance.new("UICorner", button)
-    btnCorner.CornerRadius = UDim.new(0,8)
+    btnCorner.CornerRadius = UDim.new(0, 8)
+    button.ZIndex = 3
     button.MouseEnter:Connect(function()
         TweenService:Create(button, TweenInfo.new(0.15), {BackgroundColor3 = accentColor}):Play()
     end)
@@ -403,18 +399,11 @@ btnPlayer.MouseButton1Click:Connect(function()
     btnWelcome.BackgroundColor3 = darkAccent
 end)
 
--- Initial tabs
 btnWelcome.BackgroundColor3 = accentColor
 btnPlayer.BackgroundColor3 = darkAccent
 welcomeFrame.Visible = true
 playerFrame.Visible = false
 
--- Toggle button behavior
 toggleIcon.MouseButton1Click:Connect(function()
     frame.Visible = not frame.Visible
 end)
-
--- Anchor & position for mobile
-gui.ResetOnSpawn = false
-frame.AnchorPoint = Vector2.new(0, 1)
-frame.Position = UDim2.new(0, 10, 1, -58 - 480)
